@@ -28,7 +28,10 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/flask-random-app:${{github.run_number}}
         context: .
-      
+
+  update-gitops-repo:
+    runs-on: ubuntu-latest    
+    steps:
     - name: Checkout gitops repo
       uses: actions/checkout@v2
       with:
