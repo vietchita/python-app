@@ -26,8 +26,22 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/flask-random-app:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/flask-random-app:${{github.run_number}}
         context: .
+      
+    - name: Checkout gitops repo
+      uses: actions/checkout@v2
+      with:
+        repository: vietchita/python-gitops
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: gitops-repo
 
-    - name: Verify Docker image
-      run: docker run ${{ secrets.DOCKER_USERNAME }}/flask-random-app:latest --version
+    - name: Update image in deployment.yaml
+      run: |
+        cd gitops-repo
+        sed -i 's|image: .*|image: '"${{ secrets.DOCKER_USERNAME }}/flask-random-app:${{github.run_number}}"'|g' deployment.yaml
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add deployment.yaml
+        git commit -m "Update image tag to ${{ secrets.DOCKER_USERNAME }}/flask-random-app:${{github.run_number}}"
+        git push
