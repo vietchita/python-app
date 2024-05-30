@@ -15,7 +15,7 @@ def random_number():
 @app.route('/status')
 def status():
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    return f"Hello from python app at {current_time} \n"
+    return f"Hello from python app at {current_time}  v1 \n"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
